@@ -12,7 +12,7 @@ from app.config import settings
 
 router = APIRouter(tags=["UI"])
 
-def templates(request: Request):
+def get_templates(request: Request):
     return request.app.state.templates
 
 # -------------------------
