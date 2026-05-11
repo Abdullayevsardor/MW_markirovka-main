@@ -12,7 +12,7 @@ from app.config import settings
 
 router = APIRouter(tags=["UI"])
 
-def get_templates(request: Request):
+def templates(request: Request):
     return request.app.state.templates
 
 # -------------------------
@@ -21,9 +21,11 @@ def get_templates(request: Request):
 @router.get("/")
 def user_home(request: Request, db: Session = Depends(get_db)):
     cats = db.query(Category).order_by(Category.id.asc()).all()
-    return templates(request).TemplateResponse(
-        "user_home.html",
-        {"request": request, "brand": "MAXWAY", "categories": cats}
+    # templates(request) o'rniga get_templates(request) va argumentlarni nomini ko'rsatamiz
+    return get_templates(request).TemplateResponse(
+        request=request,                    # MUHIM: nomini ko'rsating
+        name="user_home.html",              # MUHIM: nomini ko'rsating
+        context={"brand": "MAXWAY", "categories": cats} # MUHIM: context deb yozing
     )
 
 # USER: Category products
