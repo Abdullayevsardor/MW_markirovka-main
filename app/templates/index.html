@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Markirovka Tizimi</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .product-card { border: 1px solid #ddd; padding: 15px; margin: 10px; display: inline-block; text-align: center; border-radius: 8px; }
+        .product-card img { width: 150px; height: 100px; object-fit: cover; }
+        .print-btn { background: #ffcc00; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Maxway - Markirovka</h1>
+    <div id="products">
+        {% for product in products %}
+        <div class="product-card">
+            <!-- <img src="{{ product.image_path or 'https://via.placeholder.com/150' }}" alt=""> -->
+            <h3>{{ product.name }}</h3>
+            <p>Muddati: {{ product.shelf_life_hours }} soat</p>
+            <!-- <button class="print-btn" onclick="printLabel({{ products.id }})">Print 🖨️</button> -->
+            <button class="print-btn" onclick="printLabel('{{ product.id }}', '{{ product.name }}')">
+                    Print 🖨️
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function printLabel(id, name) {
+            const userName = prompt("Ismingizni kiriting (Markirovka qiluvchi):");
+            // if (userName) {
+            //     window.location.href = `/api/print/${id}?user=${userName}`;
+            // }
+            if (userName) {
+                // Yangi oynada print sahifasini ochish
+                const printWindow = window.open(
+                    `/api/marking/print/${id}?marker_name=${encodeURIComponent(userName)}`, 
+                    '_blank', 
+                    'width=400,height=600'
+                );
+            }
+        }
+    </script>
+</body>
+</html>

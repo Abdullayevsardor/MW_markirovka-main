@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+
+  <style>
+    @page {
+      size: 58mm 40mm;
+      margin: 0;
+    }
+
+    html, body {
+      width: 58mm;
+      height: 40mm;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .page{
+      width: 58mm;
+      height: 40mm;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .sticker{
+      width: 54mm;
+      height: 36mm;
+      box-sizing:border-box;
+      padding: 1mm;
+      border-radius: 5px;
+
+      /* Professional layout: name uchun fixed joy */
+      display:grid;
+      grid-template-rows:
+        auto   /* brand */
+        13mm   /* NAME: shu joy ichida shrink bo'ladi */
+        auto
+        auto
+        auto
+        auto;
+      row-gap: 0.6mm;
+
+      overflow:hidden;
+    }
+
+    .brand{
+      font-weight:700;
+      font-size:4mm;
+      text-align:center;
+      margin:0;
+      line-height:1.05;
+    }
+
+    .name{
+      font-weight:800;
+      text-align:center;
+      margin:0;
+      line-height:1.05;
+
+      /* maksimal font */
+      font-size: 5.2mm;
+
+      /* name o'z joyidan chiqmasin */
+      height: 13mm;
+      overflow:hidden;
+
+      /* vertikal markaz */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      /* uzun so'zlarni ham sindirish */
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .line{
+      text-align:center;
+      font-size:3.2mm;
+      margin:0;
+      font-weight:700;
+      line-height:1.05;
+      color:#000 !important;
+    }
+
+    @media print {
+      .no-print{ display:none !important; }
+      .sticker{ border:1px solid #000; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="sticker">
+      <div class="brand">Maxway</div>
+
+      <!-- Product name -->
+      <div class="name" id="productName">{{ product.name }}</div>
+
+      <div class="line">Хранить при {{ product.temp_range }}</div>
+      <div class="line">Срок хранения: {{ product.shelf_life_hours }} час.</div>
+      <div class="line">ОТ: {{ created_at }}</div>
+      <div class="line">ДО: {{ expires_at }}</div>
+    </div>
+  </div>
+
+  <script>
+    // Name matnini berilgan balandlikka sig'diradi: font-size kamaytiradi
+    function fitTextToBox(el, opts = {}) {
+      const minPx = opts.minPx ?? 10;      // minimal font-size (px)
+      const step  = opts.step  ?? 0.5;     // kamaytirish qadami (px)
+      const maxLoops = opts.maxLoops ?? 200;
+
+      // Boshlang'ich font-size (computed)
+      let fontSize = parseFloat(getComputedStyle(el).fontSize);
+      let loops = 0;
+
+      // Agar ba'zi brauzerlarda scrollHeight aniq bo'lmasa: reflow
+      el.offsetHeight;
+
+      while (loops < maxLoops && fontSize > minPx) {
+        // Agar sig'sa chiqamiz
+        if (el.scrollHeight <= el.clientHeight && el.scrollWidth <= el.clientWidth) break;
+
+        fontSize -= step;
+        el.style.fontSize = fontSize + "px";
+        loops++;
+      }
+    }
+
+    window.onload = function () {
+      const nameEl = document.getElementById("productName");
+
+      // 1) Avto shrink
+      fitTextToBox(nameEl, { minPx: 10, step: 0.5 });
+
+      // 2) Print
+      window.print();
+
+      // 3) Printdan keyin yopish (xohlasangiz qoldiring)
+      window.onafterprint = function() {
+        window.close();
+      };
+    };
+  </script>
+</body>
+</html>

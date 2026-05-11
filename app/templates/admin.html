@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Админ — MAXWAY</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background:#f6f7fb; }
+    .brand { font-weight:800; letter-spacing:.2px; }
+    .card { border:0; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.06); }
+    .btn-brand { background:#FFD200; border:0; font-weight:700; }
+    .btn-brand:hover { filter:brightness(.95); }
+    .badge-brand { background:#7E5FA6; }
+    .table td, .table th { vertical-align: middle; }
+  </style>
+</head>
+<body>
+<div class="container py-4">
+
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+      <div class="brand h2 mb-0">MAXWAY</div>
+      <div class="text-muted">Добавление категорий и товаров, печать этикетки</div>
+    </div>
+       <!-- <a href="http://127.0.0.1:8000/" class="btn btn-outline-secondary">
+            Назад
+       </a> -->
+       <a href="/" class="btn btn-outline-secondary">Назад</a>
+    </div>
+
+    {% set err = request.query_params.get('err') %}
+    {% set ok  = request.query_params.get('ok') %}
+
+    {% if err %}
+    <div class="alert alert-danger">
+        {% if err == 'category_exists' %}Такая категория уже существует.{% endif %}
+        {% if err == 'category_empty' %}Название категории не может быть пустым.{% endif %}
+        {% if err == 'category_image_required' %}Для категории обязательно нужно выбрать изображение.{% endif %}
+        {% if err == 'category_not_found' %}Категория не найдена ❌{% endif %}
+        {% if err == 'category_select_required' %}Сначала выберите категорию для удаления.{% endif %}
+    </div>
+    {% endif %}
+
+    {% if ok %}
+    <div class="alert alert-success">
+        {% if ok == 'category_created' %}Категория создана ✅{% endif %}
+        {% if ok == 'product_created' %}Товар добавлен ✅{% endif %}
+        {% if ok == 'category_deleted' %}Категория удалена ✅{% endif %}
+    </div>
+    {% endif %}
+
+
+  <div class="row g-4">
+    <!-- LEFT: Add product -->
+    <div class="col-lg-5">
+      <div class="card p-4">
+        <h5 class="mb-3">Добавить товар</h5>
+
+        <form method="post" action="/admin/product" class="vstack gap-3">
+            <input type="hidden" name="token" value="{{ request.query_params.get('token') }}">
+
+            <div>
+                <label class="form-label">Категория</label>
+                <div class="input-group">
+                <select name="category_id" class="form-select" required>
+                    <option value="" disabled selected>Выберите...</option>
+                    {% for c in categories %}
+                    <option value="{{ c.id }}">{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#catModal">
+                    + Новая
+                </button>
+                </div>
+            </div>
+
+          <div>
+            <label class="form-label">Название товара</label>
+            <input name="name" class="form-control" placeholder="Например: Помидор" required>
+          </div>
+
+          <div class="row g-2">
+            <!-- <div class="col-md-6">
+              <label class="form-label">Срок хранения (дней)</label>
+              <input id="storage_days" name="storage_days" type="number" min="1" step="1"
+                     class="form-control" value="1" required>
+            </div> -->
+            <div class="col-md-6">
+              <label class="form-label">Часов хранения</label>
+              <input id="shelf_life_hours" name="shelf_life_hours" type="number" min="1" step="1"
+                     class="form-control" value="24" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label">Температурный диапазон</label>
+            <input name="temp_range" class="form-control" placeholder="+2...+6"
+                   required pattern="^[^\\s].*$" title="Поле не должно быть пустым">
+          </div>
+
+          <div>
+            <label class="form-label">Температура хранения</label>
+            <input name="storage_temp" class="form-control" placeholder="+4"
+                   required pattern="^[^\\s].*$" title="Поле не должно быть пустым">
+          </div>
+
+          <!-- ВАЖНО: у товара картинка НЕ обязательна -> убрали поле совсем -->
+          <button class="btn btn-brand btn-lg">Сохранить</button>
+
+        </form>
+         
+        <form method="post" action="/admin/category/delete?token=ok" class="mt-2">
+            <input type="hidden" name="category_id" id="delete_category_id" value="">
+            <button type="submit" class="btn btn-outline-danger w-100"
+                    onclick="return confirm('Категория удалится. Товары внутри тоже удалятся. Продолжить?')">
+                🗑 Удалить выбранную категорию
+            </button>
+        </form>
+
+        <hr class="my-4">
+        <!-- <div class="small text-muted">
+          Авто-расчёт: <b>дни × 24 = часы</b>. Если вы вручную измените часы — авто-обновление отключится.
+        </div> -->
+      </div>
+    </div>
+
+    <!-- RIGHT: Products table -->
+    <div class="col-lg-7">
+      <div class="card p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="mb-0">Список товаров</h5>
+          <div class="text-muted small">Кнопка «Печать» открывает страницу этикетки</div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Срок</th>
+                <th>Действие</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for p in products %}
+              <tr>
+                <td>{{ p.id }}</td>
+                <td class="fw-semibold">{{ p.name }}</td>
+                <td class="text-muted">{{ p.shelf_life_hours }} ч.</td>
+                <td>
+                  <a class="btn btn-outline-dark btn-sm"
+                     target="_blank"
+                     href="/api/marking/print/{{ p.id }}?marker_name=admin&shelf_life_hours={{ p.shelf_life_hours }}">
+                    Печать
+                  </a>
+                  <button class="btn btn-outline-danger btn-sm delete-product-btn"
+                          data-id="{{ p.id }}">
+                      Удалить
+                  </button>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Category modal -->
+<div class="modal fade" id="catModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:16px;">
+      <div class="modal-header">
+        <h5 class="modal-title">Новая категория</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- ВАЖНО: для файла нужна форма multipart/form-data -->
+      <form method="post" action="/admin/category" enctype="multipart/form-data">
+        <input type="hidden" name="token" value="{{ request.query_params.get('token') }}">
+        
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Название категории</label>
+            <input name="name" class="form-control" placeholder="Например: овощи" required>
+          </div>
+
+          <div class="mb-1">
+            <label class="form-label">Изображение категории (обязательно)</label>
+            <input name="category_image" type="file" accept="image/*" class="form-control" required>
+            <div class="form-text">PNG/JPG. Это обязательное поле.</div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button class="btn btn-brand">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // дни -> часы auto
+  const days = document.getElementById("storage_days");
+  const hours = document.getElementById("shelf_life_hours");
+
+  function syncHours() {
+    const d = parseInt(days.value || "0", 10);
+    if (!hours.dataset.touched) {
+      hours.value = Math.max(1, d * 24);
+    }
+  }
+
+  hours.addEventListener("input", () => hours.dataset.touched = "1");
+  days.addEventListener("input", syncHours);
+
+  // init
+  syncHours();
+</script>
+ 
+<script>
+  const catSelect = document.querySelector('select[name="category_id"]');
+  const delInput = document.getElementById('delete_category_id');
+
+  function syncDeleteId() {
+    if (!catSelect || !delInput) return;
+    delInput.value = catSelect.value || "";
+  }
+  if (catSelect) {
+    catSelect.addEventListener("change", syncDeleteId);
+    syncDeleteId();
+  }
+</script>
+<script>
+  document.querySelectorAll('.delete-product-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const productId = btn.dataset.id;
+      if (!confirm('Вы уверены, что хотите удалить этот товар?')) return;
+
+      try {
+        const token = new URLSearchParams(window.location.search).get('token') || '';
+        const res = await fetch(`/admin/product/delete/${productId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          // Jadval qatorini o‘chirish
+          btn.closest('tr').remove();
+          alert('Товар удален ✅');
+        } else {
+          alert(data.error || 'Ошибка при удалении');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Ошибка при удалении');
+      }
+    });
+  });
+</script>
+
+
+
+</body>
+</html>

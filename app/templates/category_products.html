@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markirovka Tizimi - Maxway</title>
+    <style>
+        /* 1. Umumiy sozlamalar */
+        body { 
+            font-family: 'Inter', Arial, sans-serif; 
+            background-color: #f8f9fa; 
+            margin: 0; 
+            padding: 0; 
+            color: #333;
+        }
+
+        .main-wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 2. Header qismi (Logo va Sarlavha) */
+        .header-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .logo-img {
+            height: 60px;
+            width: auto;
+            display: block;
+        }
+
+        .category-title {
+            color: #ecc81d; 
+            font-weight: 700; 
+            font-size: 1.5rem; 
+            margin: 0; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* 3. "Назад" tugmasi konteyneri */
+       
+        .nav-container{
+            display:flex;
+            margin-left: auto;
+        }
+
+        
+        .glow-button {
+            white-space: nowrap;       /* Matn ikki qatorga bo'linib ketmasligi uchun */
+            padding: 12px 30px;        /* Tugma o'lchami */
+            background-color: #6c757d;
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .glow-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        /* 4. Qidiruv paneli */
+       .search-section {
+            display: flex;             /* Elementlarni yonma-yon qiladi */
+            justify-content: center;    /* Markazga tekislaydi */
+            align-items: center;        /* Vertikal bo'yicha bir xil chiziqqa oladi */
+            gap: 15px;                 /* Qidiruv va tugma orasidagi masofa */
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        .search-wrapper {
+            position: relative;
+            flex: 0 1 400px;           /* Qidiruv maydoni enini nazorat qiladi */
+            
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 15px 50px 15px 25px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        #searchInput:focus {
+            border-color: #ffcc00;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+        }
+
+        #clearSearch {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #eee;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #666;
+        }
+
+        /* 5. Mahsulotlar setkasi (Grid) */
+        #products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+            justify-content: center;
+        }
+
+        /* 6. Bir xil o'lchamdagi kartochka */
+        .product-card {
+            background: white;
+            border: 1px solid #efefef;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Elementlarni kartochka bo'ylab teng taqsimlaydi */
+            min-height: 220px; /* Barcha kartochkalar bir xil balandlikda */
+            transition: 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            box-sizing: border-box;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+        }
+
+        .product-card h3 {
+            font-size: 18px;
+            margin: 0 0 10px 0;
+            color: #222;
+            /* Uzun nomlarni 2 qatorga cheklash */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 44px; 
+            line-height: 1.2;
+        }
+
+        .product-card p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* 7. Print tugmasi */
+        .print-btn {
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .print-btn:hover {
+            background: #e6b800;
+        }
+
+        /* Mobil qurilmalar uchun moslashuv */
+        @media (max-width: 600px) {
+            #products {
+                grid-template-columns: 1fr 1fr; /* Telefondan 2 tadan chiqadi */
+                gap: 15px;
+            }
+            .product-card { padding: 15px; min-height: 180px; }
+            .glow-button { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <header class="header-area">
+        <img src="/static/logo/logo.png" alt="Maxway" class="logo-img"
+        onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\'font-weight:bold; font-size:1.5rem;\'>Maxway</span>';">
+        {% if category %}
+            <h2 class="category-title">{{ category.name }}</h2>
+        {% else %}
+            <h2 class="category-title">Распакованные продукты</h2>
+        {% endif %}
+    </header>
+ 
+
+     <section class="search-section">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" onkeyup="filterProducts()" placeholder="Поиск продукта...">
+            <button id="clearSearch" onclick="clearSearch()">×</button>
+        </div>
+         <nav class="nav-container">
+                <a href="/" class="glow-button">Назад</a>
+        </nav>
+    </section>
+
+
+    <main id="products">
+        {% for product in products %}
+        <div class="product-card" data-name="{{ product.name|lower }}">
+            <div class="card-info">
+                <h3>{{ product.name }}</h3>
+                <p>Срок хранения: {{ product.shelf_life_hours }} часов</p>
+            </div>
+            <button class="print-btn" onclick="printLabel('{{ product.id }}')">
+                Печать 🖨️
+            </button>
+        </div>
+        {% endfor %}
+    </main>
+</div>
+
+<script>
+    // 1. Qidiruv funksiyasi
+    function filterProducts() {
+        let input = document.getElementById('searchInput').value.toLowerCase();
+        let cards = document.getElementsByClassName('product-card');
+        
+        for (let card of cards) {
+            let name = card.getAttribute('data-name');
+            if (name.includes(input)) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        }
+    }
+
+    // 2. Qidiruvni tozalash
+    function clearSearch() {
+        let inputEl = document.getElementById('searchInput');
+        inputEl.value = "";
+        filterProducts();
+        inputEl.focus();
+    }
+
+    // 3. Chop etish funksiyasi
+    function printLabel(id) {
+        window.open(
+            `/api/marking/print/${id}?marker_name=admin`,
+            '_blank',
+            'width=1200,height=1600'
+        );
+    }
+</script>
+
+</body>
+</html>

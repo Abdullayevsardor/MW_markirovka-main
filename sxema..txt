@@ -1,0 +1,40 @@
+marking_system/
+│
+├── app/
+│   ├── main.py              # FastAPI start
+│   ├── config.py            # sozlamalar
+│   │
+│   ├── db/
+│   │   ├── session.py       # DB connection
+│   │   ├── base.py
+│   │
+│   ├── models/              # SQLAlchemy modellari
+│   │   ├── user.py
+│   │   ├── category.py
+│   │   ├── product.py
+│   │   ├── marking.py
+│   │
+│   ├── schemas/             # Pydantic (validation)
+│   │   ├── user.py
+│   │   ├── category.py
+│   │   ├── product.py
+│   │   ├── marking.py
+│   │
+│   ├── routers/             # API endpointlar
+│   │   ├── auth.py
+│   │   ├── admin.py
+│   │   ├── products.py
+│   │   ├── marking.py
+│   │
+│   ├── services/            # Biznes mantiq
+│   │   ├── auth_service.py
+│   │   ├── marking_service.py
+│   │
+│   ├── templates/           # Print uchun HTML
+│   │   └── sticker.html
+│   │
+│   └── static/
+│       └── style.css
+│
+├── requirements.txt
+└── run.py

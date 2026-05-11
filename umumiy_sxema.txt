@@ -1,0 +1,10 @@
+Frontend (Browser)
+   |
+   |—— Admin panel (mahsulot, kategoriya)
+   |—— Xodim panel (tanlash, print)
+   |
+FastAPI (Backend)
+   |
+Database (PostgreSQL)
+   |
+Sticker Printer
