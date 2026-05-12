@@ -32,7 +32,7 @@ def user_home(request: Request, db: Session = Depends(get_db)):
 @router.get("/category/{category_id}")
 def user_category(request: Request, category_id: int, db: Session = Depends(get_db)):
     cat = db.query(Category).filter(Category.id == category_id).first()
-    # products = db.query(Product).filter(Product.category_id == category_id).order_by(Product.id.desc()).all()
+
     products = (
         db.query(Product)
         .filter(Product.category_id == category_id)
@@ -40,11 +40,16 @@ def user_category(request: Request, category_id: int, db: Session = Depends(get_
         .all()
     )
 
-    return templates.TemplateResponse(
-        # "index.html",
-        "category_products.html",
-        {"request": request, "brand": "MAXWAY", "category": cat, "products": products}
+    return templates(request).TemplateResponse(
+        request=request,
+        name="category_products.html",
+        context={
+            "brand": "MAXWAY",
+            "category": cat,
+            "products": products
+        }
     )
+
 
 # USER: Admin button -> password page
 @router.get("/admin-login")
