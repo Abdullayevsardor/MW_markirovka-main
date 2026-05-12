@@ -22,7 +22,7 @@ def templates(request: Request):
 def user_home(request: Request, db: Session = Depends(get_db)):
     cats = db.query(Category).order_by(Category.id.asc()).all()
     # templates(request) o'rniga get_templates(request) va argumentlarni nomini ko'rsatamiz
-    return get_templates(request).TemplateResponse(
+    return templates(request).TemplateResponse(
         request=request,                    # MUHIM: nomini ko'rsating
         name="user_home.html",              # MUHIM: nomini ko'rsating
         context={"brand": "MAXWAY", "categories": cats} # MUHIM: context deb yozing
