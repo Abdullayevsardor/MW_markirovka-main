@@ -40,7 +40,7 @@ def user_category(request: Request, category_id: int, db: Session = Depends(get_
         .all()
     )
 
-    return templates(request).TemplateResponse(
+    return templates.TemplateResponse(
         # "index.html",
         "category_products.html",
         {"request": request, "brand": "MAXWAY", "category": cat, "products": products}
