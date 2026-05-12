@@ -55,8 +55,11 @@ def user_category(request: Request, category_id: int, db: Session = Depends(get_
 @router.get("/admin-login")
 def admin_login_page(request: Request):
     return templates(request).TemplateResponse(
-        "admin_login.html",
-        {"request": request, "brand": "MAXWAY"}
+        request=request,
+        name="admin_login.html",
+        context={
+            "brand": "MAXWAY"
+        }
     )
 
 @router.post("/admin-login")
