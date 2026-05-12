@@ -111,9 +111,9 @@ def admin_page(request: Request, token: str | None = None, db: Session = Depends
     products = db.query(Product).order_by(Product.id.desc()).all()
 
     return templates(request).TemplateResponse(
-        "admin.html",
-        {
-            "request": request,
+        request=request,
+        name="admin.html",
+        context={
             "brand": "MAXWAY",
             "categories": cats,
             "products": products
