@@ -31,10 +31,10 @@ def print_sticker(product_id: int, request: Request, marker_name: str = Query("N
     else:
         display_temp = temp
 
-    return templates(request).TemplateResponse(
-        "sticker.html",
-        {
-            "request": request,
+    return templates.TemplateResponse(
+        request=request,
+        name="sticker.html",
+        context={
             "product": product,
             "display_temp": display_temp,
             "storage_hours": hours,
