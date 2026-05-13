@@ -12,6 +12,7 @@ from app.config import settings
 from app.db.session import engine, Base
 from app.db import base # Modellaringiz yig'ilgan Base klasini import qiling
 import os
+import shutil
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -38,16 +39,25 @@ os.makedirs(os.path.join(STATIC_DIR, "category"), exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory="app/templates")
 app.state.templates = templates
-print("STATIC_DIR:", STATIC_DIR)
-print("FILES:", os.listdir(STATIC_DIR))
 
-category_path = os.path.join(STATIC_DIR, "category")
-print("CATEGORY EXISTS:", os.path.exists(category_path))
+STATIC_CATEGORY = "/app/static/category"
+BACKUP_CATEGORY = "/app/static_backup/category"
 
-if os.path.exists(category_path):
-    print("CATEGORY FILES:", os.listdir(category_path))
+os.makedirs(BACKUP_CATEGORY, exist_ok=True)
 
-    
+# first deploy copy
+if len(os.listdir(STATIC_CATEGORY)) <= 1:  # faqat lost+found bo'lsa
+    source = "static/category"
+
+    if os.path.exists(source):
+        for file in os.listdir(source):
+            src = os.path.join(source, file)
+            dst = os.path.join(STATIC_CATEGORY, file)
+
+            if os.path.isfile(src):
+                shutil.copy2(src, dst)
+
+print("FINAL CATEGORY:", os.listdir(STATIC_CATEGORY))
 # Routers
 app.include_router(ui.router)
 app.include_router(marking.router, prefix="/api/marking", tags=["Marking"])
