@@ -38,6 +38,9 @@ os.makedirs(os.path.join(STATIC_DIR, "category"), exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory="app/templates")
 app.state.templates = templates
+print("STATIC_DIR:", STATIC_DIR)
+print("FILES:", os.listdir(STATIC_DIR))
+print("CATEGORY:", os.listdir(os.path.join(STATIC_DIR, "category")))
 
 # Routers
 app.include_router(ui.router)
