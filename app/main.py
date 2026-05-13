@@ -47,13 +47,7 @@ os.makedirs(STATIC_CATEGORY, exist_ok=True)
 
 # print("SOURCE EXISTS:", os.path.exists(SOURCE_CATEGORY))
 
-if os.path.exists(SOURCE_CATEGORY):
-    # print("SOURCE FILES:", os.listdir(SOURCE_CATEGORY))
-
-# print("STATIC BEFORE:", os.listdir(STATIC_CATEGORY))
-
-if len(os.listdir(STATIC_CATEGORY)) <= 2:
-
+if len(os.listdir(STATIC_CATEGORY)) <= 1:
     if os.path.exists(SOURCE_CATEGORY):
 
         for file in os.listdir(SOURCE_CATEGORY):
