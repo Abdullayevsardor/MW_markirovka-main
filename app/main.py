@@ -39,25 +39,30 @@ os.makedirs(os.path.join(STATIC_DIR, "category"), exist_ok=True)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory="app/templates")
 app.state.templates = templates
+ 
 
 STATIC_CATEGORY = "/app/static/category"
-BACKUP_CATEGORY = "/app/static_backup/category"
+SOURCE_CATEGORY = "/app/source_images"
 
-os.makedirs(BACKUP_CATEGORY, exist_ok=True)
+os.makedirs(STATIC_CATEGORY, exist_ok=True)
 
-# first deploy copy
-if len(os.listdir(STATIC_CATEGORY)) <= 1:  # faqat lost+found bo'lsa
-    source = "static/category"
+print("STATIC BEFORE:", os.listdir(STATIC_CATEGORY))
 
-    if os.path.exists(source):
-        for file in os.listdir(source):
-            src = os.path.join(source, file)
+# agar volume bo'sh bo'lsa
+if len(os.listdir(STATIC_CATEGORY)) <= 1:
+    if os.path.exists(SOURCE_CATEGORY):
+
+        for file in os.listdir(SOURCE_CATEGORY):
+            src = os.path.join(SOURCE_CATEGORY, file)
             dst = os.path.join(STATIC_CATEGORY, file)
 
             if os.path.isfile(src):
                 shutil.copy2(src, dst)
 
-print("FINAL CATEGORY:", os.listdir(STATIC_CATEGORY))
+print("STATIC AFTER:", os.listdir(STATIC_CATEGORY))
+
+
+
 # Routers
 app.include_router(ui.router)
 app.include_router(marking.router, prefix="/api/marking", tags=["Marking"])
