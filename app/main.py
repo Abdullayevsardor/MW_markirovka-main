@@ -42,7 +42,7 @@ app.state.templates = templates
  
 
 STATIC_CATEGORY = "/app/static/category"
-SOURCE_CATEGORY = "/app/source_images"
+SOURCE_CATEGORY = "source_images"
 
 os.makedirs(STATIC_CATEGORY, exist_ok=True)
 
