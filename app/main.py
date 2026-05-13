@@ -45,12 +45,12 @@ SOURCE_CATEGORY = "source_images"
 
 os.makedirs(STATIC_CATEGORY, exist_ok=True)
 
-print("SOURCE EXISTS:", os.path.exists(SOURCE_CATEGORY))
+# print("SOURCE EXISTS:", os.path.exists(SOURCE_CATEGORY))
 
 if os.path.exists(SOURCE_CATEGORY):
-    print("SOURCE FILES:", os.listdir(SOURCE_CATEGORY))
+    # print("SOURCE FILES:", os.listdir(SOURCE_CATEGORY))
 
-print("STATIC BEFORE:", os.listdir(STATIC_CATEGORY))
+# print("STATIC BEFORE:", os.listdir(STATIC_CATEGORY))
 
 if len(os.listdir(STATIC_CATEGORY)) <= 2:
 
@@ -64,7 +64,7 @@ if len(os.listdir(STATIC_CATEGORY)) <= 2:
             if os.path.isfile(src):
                 shutil.copy2(src, dst)
 
-print("STATIC AFTER:", os.listdir(STATIC_CATEGORY))
+# print("STATIC AFTER:", os.listdir(STATIC_CATEGORY))
 
 
 # Routers
