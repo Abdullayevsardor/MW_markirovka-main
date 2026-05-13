@@ -40,19 +40,24 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory="app/templates")
 app.state.templates = templates
  
-
 STATIC_CATEGORY = "/app/static/category"
 SOURCE_CATEGORY = "source_images"
 
 os.makedirs(STATIC_CATEGORY, exist_ok=True)
 
+print("SOURCE EXISTS:", os.path.exists(SOURCE_CATEGORY))
+
+if os.path.exists(SOURCE_CATEGORY):
+    print("SOURCE FILES:", os.listdir(SOURCE_CATEGORY))
+
 print("STATIC BEFORE:", os.listdir(STATIC_CATEGORY))
 
-# agar volume bo'sh bo'lsa
-if len(os.listdir(STATIC_CATEGORY)) <= 1:
+if len(os.listdir(STATIC_CATEGORY)) <= 2:
+
     if os.path.exists(SOURCE_CATEGORY):
 
         for file in os.listdir(SOURCE_CATEGORY):
+
             src = os.path.join(SOURCE_CATEGORY, file)
             dst = os.path.join(STATIC_CATEGORY, file)
 
@@ -60,7 +65,6 @@ if len(os.listdir(STATIC_CATEGORY)) <= 1:
                 shutil.copy2(src, dst)
 
 print("STATIC AFTER:", os.listdir(STATIC_CATEGORY))
-
 
 
 # Routers
