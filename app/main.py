@@ -40,8 +40,14 @@ templates = Jinja2Templates(directory="app/templates")
 app.state.templates = templates
 print("STATIC_DIR:", STATIC_DIR)
 print("FILES:", os.listdir(STATIC_DIR))
-print("CATEGORY:", os.listdir(os.path.join(STATIC_DIR, "category")))
 
+category_path = os.path.join(STATIC_DIR, "category")
+print("CATEGORY EXISTS:", os.path.exists(category_path))
+
+if os.path.exists(category_path):
+    print("CATEGORY FILES:", os.listdir(category_path))
+
+    
 # Routers
 app.include_router(ui.router)
 app.include_router(marking.router, prefix="/api/marking", tags=["Marking"])
